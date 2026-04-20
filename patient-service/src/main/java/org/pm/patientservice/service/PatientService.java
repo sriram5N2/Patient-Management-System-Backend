@@ -1,0 +1,56 @@
+package org.pm.patientservice.service;
+
+import org.pm.patientservice.dto.PatientRequestDTO;
+import org.pm.patientservice.dto.PatientResponseDTO;
+import org.pm.patientservice.exception.EmailAlreadyExistsException;
+import org.pm.patientservice.exception.PatientNotFoundException;
+import org.pm.patientservice.mapper.PatientMapper;
+import org.pm.patientservice.model.Patient;
+import org.pm.patientservice.repository.PatientRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class PatientService {
+    private final PatientRepository patientRepository;
+
+
+    public PatientService(PatientRepository patientRepository)
+    {
+        this.patientRepository=patientRepository;
+    }
+    public List<PatientResponseDTO> getPatients()
+    {
+        List<Patient> patients=patientRepository.findAll();
+
+        return patients.stream().map(PatientMapper::toDTO).toList();
+    }
+    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO)
+    {
+        if(patientRepository.existsByEmail(patientRequestDTO.getEmail()))
+        {
+            throw new EmailAlreadyExistsException("User with this Email already Exists");
+        }
+        Patient newPatient=patientRepository.save(PatientMapper.toModel(patientRequestDTO));
+        return PatientMapper.toDTO(newPatient);
+    }
+    public PatientResponseDTO updatePatient(UUID id,PatientRequestDTO patientRequestDTO)
+    {
+        Patient patient=patientRepository.findById(id).orElseThrow(()-> new PatientNotFoundException("User with "+id+"does not exist"));
+        if(patientRepository.existsByEmailAndIdNot(patientRequestDTO.getEmail(),id))
+        {
+            throw new EmailAlreadyExistsException("User with this Email already Exists");
+        }
+        patient.setName(patientRequestDTO.getName());
+        patient.setAddress(patientRequestDTO.getAddress());
+        patient.setEmail(patientRequestDTO.getEmail());
+        patient.setDateofbirth(LocalDate.parse(patientRequestDTO.getDateofbirth()));
+
+        Patient updatedPatient=patientRepository.save(patient);
+        return PatientMapper.toDTO(updatedPatient);
+    }
+
+}

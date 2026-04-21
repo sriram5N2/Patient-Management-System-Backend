@@ -47,10 +47,24 @@ public class PatientService {
         patient.setName(patientRequestDTO.getName());
         patient.setAddress(patientRequestDTO.getAddress());
         patient.setEmail(patientRequestDTO.getEmail());
-        patient.setDateofbirth(LocalDate.parse(patientRequestDTO.getDateofbirth()));
+        patient.setDate_of_birth(LocalDate.parse(patientRequestDTO.getDateofbirth()));
 
         Patient updatedPatient=patientRepository.save(patient);
         return PatientMapper.toDTO(updatedPatient);
+    }
+
+    public Void deletePatient(UUID id)
+    {
+        if(patientRepository.existsById(id)){
+        patientRepository.deleteById(id);
+        System.out.println("Patient Deleted Successfully");
+        }
+        else {
+            System.out.println("Check your Id");
+        }
+
+
+        return null;
     }
 
 }

@@ -16,9 +16,9 @@ public class PatientRequestDTO {
     @NotBlank(message = "Address cannot be blank")
     private String address;
     @NotBlank(message = "dateofbirth cannot be blank")
-    private String dateofbirth;
+    private String date_of_birth;
     @NotBlank(groups = CreatePatientValidatorGroup.class, message = "registered date cannot be blank")
-    private String registereddate;
+    private String registered_date;
 
     public String getName() {
         return name;
@@ -45,18 +45,18 @@ public class PatientRequestDTO {
     }
 
     public String getDateofbirth() {
-        return dateofbirth;
+        return date_of_birth;
     }
 
     public void setDateofbirth(String dateofbirth) {
-        this.dateofbirth = dateofbirth;
+        this.date_of_birth = date_of_birth;
     }
 
     public String getRegistereddate() {
-        return registereddate;
+        return registered_date;
     }
 
     public void setRegistereddate(String registereddate) {
-        this.registereddate = registereddate;
+        this.registered_date = registered_date;
     }
 }
